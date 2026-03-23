@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Solar Cell Report - Final Layout</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: 'Tahoma', sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+        th, td { border: 1px solid #ccc; padding: 6px; text-align: center; font-size: 14px; }
+        .header-main { background-color: #addc8d; font-weight: bold; }
+        .header-sub { background-color: #f2c811; font-weight: bold; }
+        .val-cell { font-weight: bold; text-align: right; padding-right: 10px; }
+        .weekend { background-color: #ffff00; }
+        .grand-total { background-color: #addc8d; color: #c0392b; font-size: 16px; }
+        .thai-baht { color: #d35400; font-weight: bold; text-align: right; border: none; padding-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3 style="text-align:center;">📊 รายงานสรุปประจำเดือน</h3>
+    <table>
+        <thead>
+            <tr class="header-main"><th colspan="7">สรุปข้อมูลการผลิตไฟฟ้า</th></tr>
+            <tr class="header-sub">
+                <th rowspan="2" style="width:12%">วันที่</th>
+                <th colspan="2">ค่ามิเตอร์</th>
+                <th colspan="2">ไฟฟ้าที่ผลิตได้</th>
+                <th colspan="2">ผลรวม</th>
+            </tr>
+            <tr class="header-sub">
+                <th>เฟส 1</th><th>เฟส 2</th><th>เฟส 1</th><th>เฟส 2</th><th>ปกติ</th><th>หยุด</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" style="text-align:right; background:#f2c811; font-weight:bold;">รวม</td>
+                <td id="total-units" class="val-cell">0</td>
+                <td id="total-weekend-units" class="val-cell">0</td>
+            </tr>
+            <tr>
+                <td colspan="4" rowspan="3" style="background:#f9f9f9; font-weight:bold; vertical-align:middle;">ประหยัดไฟรวม เป็นเงิน</td>
+                <td style="background:#f2c811; font-weight:bold;">หน่วยละ</td>
+                <td class="val-cell">4.58</td>
+                <td class="val-cell">3.00</td>
+            </tr>
+            <tr>
+                <td style="background:#f2c811; font-weight:bold;">เป็นเงิน (บาท)</td>
+                <td id="cost-normal" class="val-cell">0</td>
+                <td id="cost-weekend" class="val-cell">0</td>
+            </tr>
+            <tr>
+                <td style="background:#addc8d; font-weight:bold;">รวมทั้งสิ้น</td>
+                <td colspan="2" id="grand-total" class="val-cell grand-total" style="text-align:center;">0</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="border:none;"></td>
+                <td colspan="4" id="baht-text" class="thai-baht">กำลังโหลด...</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script>
+    const tableBody = document.getElementById('tableBody');
+
+    // ฟังก์ชันจัดรูปแบบตัวเลข (ไม่มีทศนิยม)
+    function formatInt(val) {
+        const n = Math.round(parseFloat(val));
+        return !isNaN(n) ? n.toLocaleString('th-TH') : "";
+    }
+
+    function initTable() {
+        for (let i = 1; i <= 31; i++) {
+            const row = document.createElement('tr');
+            const date = new Date(2026, 0, i); // มกราคม 2569 ตามรูปล่าสุด
+            if (date.getDay() === 0 || date.getDay() === 6) row.className = 'weekend';
+            row.innerHTML = `<td>${i}/1/2569</td><td></td><td></td><td></td><td></td><td></td><td></td>`;
+            tableBody.appendChild(row);
+        }
+    }
+
+    async function loadData() {
+        try {
+            const response = await fetch('data.xlsx');
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(new Uint8Array(arrayBuffer), {type: 'array'});
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
+
+            const rows = tableBody.getElementsByTagName('tr');
+            for (let i = 0; i < 31; i++) {
+                const exRow = json[i + 4]; // เริ่มแถวที่ 5 ใน Excel
+                if (exRow) {
+                    const cells = rows[i].getElementsByTagName('td');
+                    // ใส่ข้อมูลจาก B, C, D, E, F, G
+                    for (let j = 1; j <= 6; j++) {
+                        cells[j].innerText = formatInt(exRow[j]);
+                    }
+                }
+            }
+
+            // สรุปท้ายตาราง (ใช้เลขจำนวนเต็ม)
+            if (json[35]) {
+                document.getElementById('total-units').innerText = formatInt(json[35][5]); // F36
+                document.getElementById('total-weekend-units').innerText = formatInt(json[35][6]); // G36
+            }
+            if (json[38]) {
+                document.getElementById('cost-normal').innerText = formatInt(json[38][5]); // F39
+                document.getElementById('cost-weekend').innerText = formatInt(json[38][6]); // G39
+            }
+            if (json[39]) document.getElementById('grand-total').innerText = formatInt(json[39][5]); // F40
+            if (json[40]) document.getElementById('baht-text').innerText = json[40][3] || ""; // D41
+
+        } catch (e) {
+            document.getElementById('baht-text').innerText = "รอไฟล์ data.xlsx";
+        }
+    }
+
+    initTable();
+    loadData();
+</script>
+</body>
+</html>
