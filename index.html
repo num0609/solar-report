@@ -2,63 +2,67 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Solar Cell Report - Final Layout</title>
+    <title>Solar Cell Report - GitHub Version</title>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         body { font-family: 'Tahoma', sans-serif; padding: 20px; background-color: #f4f4f4; }
         .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
-        th, td { border: 1px solid #ccc; padding: 6px; text-align: center; font-size: 14px; }
+        h2 { text-align: center; color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
         .header-main { background-color: #addc8d; font-weight: bold; }
         .header-sub { background-color: #f2c811; font-weight: bold; }
-        .val-cell { font-weight: bold; text-align: right; padding-right: 10px; }
+        .val-cell { font-weight: bold; text-align: right; padding-right: 15px; }
         .weekend { background-color: #ffff00; }
-        .grand-total { background-color: #addc8d; color: #c0392b; font-size: 16px; }
-        .thai-baht { color: #d35400; font-weight: bold; text-align: right; border: none; padding-top: 10px; }
+        .total-row { background-color: #f2c811; font-weight: bold; }
+        .grand-total-row { background-color: #addc8d; font-weight: bold; font-size: 1.1em; color: #c0392b; }
+        .thai-baht { text-align: center; font-style: italic; color: #d35400; background-color: #fef5e7; font-weight: bold; padding: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h3 style="text-align:center;">📊 รายงานสรุปประจำเดือน</h3>
+    <h2>📊 รายงานสรุปการผลิตไฟฟ้าโซล่าเซลล์</h2>
+    
     <table>
         <thead>
-            <tr class="header-main"><th colspan="7">สรุปข้อมูลการผลิตไฟฟ้า</th></tr>
+            <tr class="header-main"><th colspan="7">สรุปข้อมูลประจำเดือน</th></tr>
             <tr class="header-sub">
-                <th rowspan="2" style="width:12%">วันที่</th>
-                <th colspan="2">ค่ามิเตอร์</th>
-                <th colspan="2">ไฟฟ้าที่ผลิตได้</th>
-                <th colspan="2">ผลรวม</th>
+                <th rowspan="2">วันที่</th>
+                <th colspan="2">ค่ามิเตอร์ (kwhr)</th>
+                <th colspan="2">ไฟฟ้าที่ผลิตได้ (kwhr)</th>
+                <th colspan="2">ผลรวม (kwhr)</th>
             </tr>
             <tr class="header-sub">
-                <th>เฟส 1</th><th>เฟส 2</th><th>เฟส 1</th><th>เฟส 2</th><th>ปกติ</th><th>หยุด</th>
+                <th>เฟส 1</th><th>เฟส 2</th><th>เฟส 1</th><th>เฟส 2</th><th>วันปกติ</th><th>วันหยุด</th>
             </tr>
         </thead>
-        <tbody id="tableBody"></tbody>
+        <tbody id="tableBody">
+            </tbody>
         <tfoot>
             <tr>
-                <td colspan="5" style="text-align:right; background:#f2c811; font-weight:bold;">รวม</td>
-                <td id="total-units" class="val-cell">0</td>
-                <td id="total-weekend-units" class="val-cell">0</td>
+                <td colspan="5" class="total-row" style="text-align: right;">รวม</td>
+                <td id="total-units" class="val-cell">0.00</td>
+                <td></td>
             </tr>
             <tr>
-                <td colspan="4" rowspan="3" style="background:#f9f9f9; font-weight:bold; vertical-align:middle;">ประหยัดไฟรวม เป็นเงิน</td>
-                <td style="background:#f2c811; font-weight:bold;">หน่วยละ</td>
+                <td colspan="4" rowspan="3" style="background:#f9f9f9">ประหยัดไฟรวม เป็นเงิน</td>
+                <td class="header-sub">หน่วยละ</td>
                 <td class="val-cell">4.58</td>
                 <td class="val-cell">3.00</td>
             </tr>
             <tr>
-                <td style="background:#f2c811; font-weight:bold;">เป็นเงิน (บาท)</td>
-                <td id="cost-normal" class="val-cell">0</td>
-                <td id="cost-weekend" class="val-cell">0</td>
+                <td class="header-sub">เป็นเงิน (บาท)</td>
+                <td id="cost-normal" class="val-cell">0.00</td>
+                <td id="cost-weekend" class="val-cell">0.00</td>
             </tr>
             <tr>
-                <td style="background:#addc8d; font-weight:bold;">รวมทั้งสิ้น</td>
-                <td colspan="2" id="grand-total" class="val-cell grand-total" style="text-align:center;">0</td>
+                <td class="header-sub" style="background-color:#addc8d">รวมทั้งสิ้น</td>
+                <td colspan="2" id="grand-total" class="val-cell grand-total-row" style="text-align: center;">0.00</td>
             </tr>
             <tr>
-                <td colspan="3" style="border:none;"></td>
-                <td colspan="4" id="baht-text" class="thai-baht">กำลังโหลด...</td>
+                <td colspan="4" style="border:none"></td>
+                <td colspan="3" id="baht-text" class="thai-baht">กำลังโหลดข้อมูล...</td>
             </tr>
         </tfoot>
     </table>
@@ -67,56 +71,58 @@
 <script>
     const tableBody = document.getElementById('tableBody');
 
-    // ฟังก์ชันจัดรูปแบบตัวเลข (ไม่มีทศนิยม)
-    function formatInt(val) {
-        const n = Math.round(parseFloat(val));
-        return !isNaN(n) ? n.toLocaleString('th-TH') : "";
+    // ฟังก์ชันจัดรูปแบบตัวเลข
+    function formatNum(val) {
+        const n = parseFloat(val);
+        return !isNaN(n) ? n.toLocaleString('th-TH', {minimumFractionDigits: 2}) : "";
     }
 
+    // สร้างแถวเปล่ารอไว้ 31 วัน
     function initTable() {
         for (let i = 1; i <= 31; i++) {
             const row = document.createElement('tr');
-            const date = new Date(2026, 0, i); // มกราคม 2569 ตามรูปล่าสุด
+            // เช็กวันเสาร์-อาทิตย์ (สมมติเดือนมีนาคม 2569 ตามรูป)
+            const date = new Date(2026, 2, i);
             if (date.getDay() === 0 || date.getDay() === 6) row.className = 'weekend';
-            row.innerHTML = `<td>${i}/1/2569</td><td></td><td></td><td></td><td></td><td></td><td></td>`;
+            
+            row.innerHTML = `<td>${i}/3/2569</td><td></td><td></td><td></td><td></td><td></td><td></td>`;
             tableBody.appendChild(row);
         }
     }
 
+    // ฟังก์ชันดึงไฟล์ Excel อัตโนมัติ
     async function loadData() {
         try {
             const response = await fetch('data.xlsx');
             const arrayBuffer = await response.arrayBuffer();
-            const workbook = XLSX.read(new Uint8Array(arrayBuffer), {type: 'array'});
+            const data = new Uint8Array(arrayBuffer);
+            const workbook = XLSX.read(data, {type: 'array'});
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
 
             const rows = tableBody.getElementsByTagName('tr');
+            // ใส่ข้อมูลรายวัน (แถว 5-35 ใน Excel)
             for (let i = 0; i < 31; i++) {
-                const exRow = json[i + 4]; // เริ่มแถวที่ 5 ใน Excel
-                if (exRow) {
+                const excelRow = json[i + 4];
+                if (excelRow) {
                     const cells = rows[i].getElementsByTagName('td');
-                    // ใส่ข้อมูลจาก B, C, D, E, F, G
                     for (let j = 1; j <= 6; j++) {
-                        cells[j].innerText = formatInt(exRow[j]);
+                        cells[j].innerText = formatNum(excelRow[j]);
                     }
                 }
             }
 
-            // สรุปท้ายตาราง (ใช้เลขจำนวนเต็ม)
-            if (json[35]) {
-                document.getElementById('total-units').innerText = formatInt(json[35][5]); // F36
-                document.getElementById('total-weekend-units').innerText = formatInt(json[35][6]); // G36
-            }
+            // ใส่ข้อมูลสรุปท้ายตาราง
+            if (json[35]) document.getElementById('total-units').innerText = formatNum(json[35][5]);
             if (json[38]) {
-                document.getElementById('cost-normal').innerText = formatInt(json[38][5]); // F39
-                document.getElementById('cost-weekend').innerText = formatInt(json[38][6]); // G39
+                document.getElementById('cost-normal').innerText = formatNum(json[38][5]);
+                document.getElementById('cost-weekend').innerText = formatNum(json[38][6]);
             }
-            if (json[39]) document.getElementById('grand-total').innerText = formatInt(json[39][5]); // F40
-            if (json[40]) document.getElementById('baht-text').innerText = json[40][3] || ""; // D41
+            if (json[39]) document.getElementById('grand-total').innerText = formatNum(json[39][5]);
+            if (json[40]) document.getElementById('baht-text').innerText = json[40][3] || "";
 
         } catch (e) {
-            document.getElementById('baht-text').innerText = "รอไฟล์ data.xlsx";
+            document.getElementById('baht-text').innerText = "ไม่พบไฟล์ data.xlsx หรือชื่อไฟล์ไม่ถูกต้อง";
         }
     }
 
